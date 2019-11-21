@@ -1,0 +1,30 @@
+{
+  "name": "magnetic",
+  "version": "0.1.0",
+  "main": "electron/main.js",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "concurrently -k \"npm run start:render\" \"npm run start:main\"",
+    "start:render": "npm run dev",
+    "start:main": "cross-env NODE_ENV=development electron ."
+  },
+  "dependencies": {
+    "@zeit/next-less": "^1.0.1",
+    "babel-plugin-import": "^1.12.2",
+    "js-base64": "^2.5.1",
+    "leaflet": "^1.6.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "less-vars-to-js": "^1.3.0",
+    "next": "9.1.3",
+    "react": "16.12.0",
+    "react-dom": "16.12.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.0.0",
+    "cross-env": "^6.0.3",
+    "electron": "^7.1.1"
+  }
+}
