@@ -8,6 +8,16 @@ const LeafletMap = () => {
       let resp = await fetch('http://ifconfig.co/json')
       return resp.json()
     } catch(err) {
+    }
+  }
+
+  const fetchLALLocation = async () => {
+    try {
+      let { ip } = await fetchIpLocation()
+      var url = 'http://api.ipstack.com/' + ip + '?access_key=7155325261b9e5c41a079905c153643b&format=1'
+      let resp = await fetch(url)
+      return resp.json()
+    } catch(err) {
       return {
         'latitude': 39.9042,
         'longitude': 116.4074,
@@ -16,10 +26,11 @@ const LeafletMap = () => {
   }
 
   useEffect(async () => {
-    let { latitude, longitude } = await fetchIpLocation()
-
+    let { latitude, longitude } = await fetchLALLocation()
     console.log(`[${latitude}, ${longitude}]`)
+
     const map = L.map('map').setView([latitude, longitude], 12)
+    L.marker([latitude, longitude]).addTo(map).bindPopup("<b>I'm here!</b>").openPopup();
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -43,7 +54,6 @@ const LeafletMap = () => {
 
   map.on('click', onMapClick);
   }, [])
-
 
   return (
     <div id="map">
