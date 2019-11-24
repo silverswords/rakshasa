@@ -24,6 +24,24 @@ const LeafletMap = () => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
     }).addTo(map)
+
+  var popup = L.popup();
+  
+	function onMapClick(e) {
+		popup
+			.setLatLng(e.latlng)
+			.setContent("You clicked the map at " + e.latlng.toString())
+      .openOn(map);
+      
+      L.circle(e.latlng, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 100
+      }).addTo(map);
+	}
+
+  map.on('click', onMapClick);
   }, [])
 
   return (
