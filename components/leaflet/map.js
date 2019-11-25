@@ -1,20 +1,23 @@
 import React, { useEffect } from 'react'
-import L from 'leaflet'
 import fetch from 'isomorphic-unfetch'
+import L from 'leaflet'
 
 const LeafletMap = () => {
-  const fetchIpLocation = async () => {
+  const fetchIpAddress = async () => {
     try {
       let resp = await fetch('http://ifconfig.co/json')
       return resp.json()
     } catch(err) {
+      return {
+        ip: '1.2.3.4',
+      }
     }
   }
 
-  const fetchLALLocation = async () => {
+  const fetchLocation = async () => {
     try {
-      let { ip } = await fetchIpLocation()
-      var url = 'http://api.ipstack.com/' + ip + '?access_key=7155325261b9e5c41a079905c153643b&format=1'
+      const { ip } = await fetchIpAddress()
+      const url = `http://api.ipstack.com/${ip}?access_key=7155325261b9e5c41a079905c153643b&format=1`
       let resp = await fetch(url)
       return resp.json()
     } catch(err) {
@@ -25,9 +28,26 @@ const LeafletMap = () => {
     }
   }
 
+  const onMapClick = (map) => {
+    return (e) => {
+      let popup = L.popup()
+
+      popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map)
+      
+      L.circle(e.latlng, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 100
+      }).addTo(map)
+    }
+  }
+
   useEffect(async () => {
-    let { latitude, longitude } = await fetchLALLocation()
-    console.log(`[${latitude}, ${longitude}]`)
+    let { latitude, longitude } = await fetchLocation()
 
     const map = L.map('map').setView([latitude, longitude], 12)
     L.marker([latitude, longitude]).addTo(map).bindPopup("<b>I'm here!</b>").openPopup();
@@ -36,23 +56,7 @@ const LeafletMap = () => {
       maxZoom: 18,
     }).addTo(map)
 
-  var popup = L.popup();
-  
-	function onMapClick(e) {
-		popup
-			.setLatLng(e.latlng)
-			.setContent("You clicked the map at " + e.latlng.toString())
-      .openOn(map);
-      
-      L.circle(e.latlng, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 100
-      }).addTo(map);
-	}
-
-  map.on('click', onMapClick);
+    map.on('click', onMapClick(map))
   }, [])
 
   return (
