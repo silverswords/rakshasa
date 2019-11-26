@@ -33,7 +33,7 @@ const macOSTemplate = [
       {
         label: 'Leaflet',
         click: async () => {
-          onLoadPage('404')
+          onLoadPage('index')
         }
       },
     ]
