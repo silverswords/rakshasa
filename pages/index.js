@@ -14,6 +14,7 @@ const Index = () => {
         <title>Leaflet Basic</title>
         <link rel='icon' href='/favicon.ico' />
         <link href="/leaflet.css" rel="stylesheet" />
+        <script src='/d3.min.js'></script>
       </Head>
 
       <LeafletMap />

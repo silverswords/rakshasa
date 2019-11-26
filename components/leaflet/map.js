@@ -34,7 +34,7 @@ const LeafletMap = () => {
 
       popup
         .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
+        .setContent('You clicked the map at ' + e.latlng.toString())
         .openOn(map)
       
       L.circle(e.latlng, {
@@ -46,21 +46,49 @@ const LeafletMap = () => {
     }
   }
 
+  const drawD3Circle = ({ map, latitude, longitude }) => {
+    const svg = d3.select(map.getPanes().overlayPane).select('svg')
+    const g = svg.select('g')
+
+    const data = [
+      { 'coords': [latitude, longitude] },
+    ].map((d) => { 
+      const geo = map.latLngToLayerPoint(d.coords)
+      d.coords = { 'x' : geo.x, 'y' : geo.y }
+      return d
+    })
+
+    g.selectAll('circle')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', d => d.coords.x)
+      .attr('cy', d => d.coords.y)
+      .attr('r', 50)
+      .style('fill', 'purple')
+      .style('opacity', '0.4')
+
+    map.on('viewreset', drawD3Circle)
+  }
+
   useEffect(async () => {
     let { latitude, longitude } = await fetchLocation()
 
     const map = L.map('map').setView([latitude, longitude], 12)
-    L.marker([latitude, longitude]).addTo(map).bindPopup("<b>I'm here!</b>").openPopup();
+    L.marker([latitude, longitude]).addTo(map).bindPopup('<b>I\'m here!</b>').openPopup()
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
     }).addTo(map)
 
     map.on('click', onMapClick(map))
+
+    L.svg().addTo(map)
+    drawD3Circle({ map, latitude, longitude })
   }, [])
 
   return (
-    <div id="map">
+    <div id='map'>
       <style jsx>{`
         #map {
           width: 100%;
