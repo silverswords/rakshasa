@@ -62,93 +62,149 @@ const LeafletMap = () => {
       .data(data)
       .enter()
       .append('circle')
-      .attr('cx', "50%") 
-      .attr('cy', "50%")
+      .attr('cx', '50%') 
+      .attr('cy', '50%')
       .attr('r', 20)
       .style('fill', '#4e54c8')
       .style('opacity', '0.4')
       .transition()
-      .duration(2000)
+        .duration(2000)
       .transition()
       .on('start', function repeat() {
         d3.active(this)
           .transition()
-          .duration(500)
-          .attr('r', 21)
-          .style('fill', '#4e54c8')
+            .duration(500)
+            .attr('r', 21)
+            .style('fill', '#4e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 22)
+            .duration(500)
+            .attr('r', 22)
           .transition()
-          .duration(500)
-          .attr('r', 23)
-          .style('fill', '#5e54c8')
+            .duration(500)
+            .attr('r', 23)
+            .style('fill', '#5e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 24)
+            .duration(500)
+            .attr('r', 24)
           .transition()
-          .duration(500)
-          .attr('r', 25)
-          .attr('cx', "25%") 
-          .attr('cy', "25%")
+            .duration(500)
+            .attr('r', 25)
+            .attr('cx', '25%') 
+            .attr('cy', '25%')
           .transition()
-          .duration(500)
-          .attr('r', 26)
-          .style('fill', '#6e54c8')
+            .duration(500)
+            .attr('r', 26)
+            .style('fill', '#6e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 27)
+            .duration(500)
+            .attr('r', 27)
           .transition()
-          .duration(500)
-          .attr('r', 28)
-          .style('fill', '#7e54c8')
+            .duration(500)
+            .attr('r', 28)
+            .style('fill', '#7e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 29)
+            .duration(500)
+            .attr('r', 29)
           .transition()
-          .duration(500)
-          .attr('r', 30)
-          .style('fill', '#8f94fb')
-          .attr('cx', "75%") 
-          .attr('cy', "25%")
+            .duration(500)
+            .attr('r', 30)
+            .style('fill', '#8f94fb')
+            .attr('cx', '75%') 
+            .attr('cy', '25%')
           .transition()
-          .duration(500)
-          .attr('r', 29)
+            .duration(500)
+            .attr('r', 29)
           .transition()
-          .duration(500)
-          .attr('r', 28)
-          .style('fill', '#7e54c8')
+            .duration(500)
+            .attr('r', 28)
+            .style('fill', '#7e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 27)
+            .duration(500)
+            .attr('r', 27)
           .transition()
-          .duration(500)
-          .attr('r', 26)
-          .style('fill', '#6e54c8')
+            .duration(500)
+            .attr('r', 26)
+            .style('fill', '#6e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 25)
-          .attr('cx', "75%") 
-          .attr('cy', "75%")
+            .duration(500)
+            .attr('r', 25)
+            .attr('cx', '75%') 
+            .attr('cy', '75%')
           .transition()
-          .duration(500)
-          .attr('r', 24)
+            .duration(500)
+            .attr('r', 24)
           .transition()
-          .duration(500)
-          .attr('r', 23)
-          .style('fill', '#5e54c8')
+            .duration(500)
+            .attr('r', 23)
+            .style('fill', '#5e54c8')
           .transition()
-          .duration(500)
-          .attr('r', 22)
+            .duration(500)
+            .attr('r', 22)
           .transition()
-          .duration(500)
-          .attr('r', 21)
-          .style('fill', '#4e54c8')
+            .duration(500)
+            .attr('r', 21)
+            .style('fill', '#4e54c8')
           .transition()
-          .attr('cx', "25%") 
-          .attr('cy', "75%")
-          .on('start', repeat)
- })
+            .attr('cx', '25%') 
+            .attr('cy', '75%')
+            .on('start', repeat)
+      })
+  }
+
+  const drawGeoJson = ({ map }) => {
+    const svg = d3.select(map.getPanes().overlayPane).select('svg')
+    const g = svg.select('g')
+
+    const sampleJSON = {
+      "type": "FeatureCollection",
+      "features": [{
+        "type": "Feature",
+        "properties": {
+          "shape": "Line",
+          "name": "Sample Ploygen"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [115.518494, 38.862434],
+            [115.551109, 38.872993],
+            [115.563297, 38.85174],
+            [115.528278, 38.842382],
+            [115.54493, 38.823126],
+            [115.581493, 38.838237],
+            [115.575657, 38.810821],
+            [115.553856, 38.809082],
+            [115.494461, 38.810687],
+            [115.48502, 38.830481],
+            [115.498066, 38.842382],
+            [115.48708, 38.858959],
+            [115.518494, 38.862434]
+          ]
+        }
+      }]
+    }
+
+    function projectPoint(x, y) {
+      let point = map.latLngToLayerPoint(new L.LatLng(y, x))
+      this.stream.point(point.x, point.y);
+    }
+
+    const transform = d3.geoTransform({point: projectPoint})
+    const geoPath = d3.geoPath().projection(transform)
+
+    const featureElement = svg.selectAll('path')
+      .data(sampleJSON.features)
+      .enter()
+      .append('path')
+      .attr('stroke', 'gray')
+      .attr('fill', 'purple')
+      .attr('fill-opacity', 0.6)
+    
+    const update = () => {
+      featureElement.attr('d', geoPath)
+    }
+
+    update()
   }
 
   useEffect(async () => {
@@ -160,14 +216,13 @@ const LeafletMap = () => {
       maxZoom: 18,
     }).addTo(map)
 
-    L.marker([latitude, longitude]).addTo(map).bindPopup('<b>I\'m here!</b>').openPopup()
+    map.on('click', onMapClick(map))
 
     L.svg().addTo(map)
     drawD3Circle({ map, latitude, longitude })
-
-    map.on('click', onMapClick(map))
-
     map.on('viewreset', drawD3Circle)
+
+    drawGeoJson({ map })
   }, [])
 
   return (
