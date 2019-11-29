@@ -18,11 +18,11 @@ const Index = () => {
       </Head>
 
       <LeafletMap />
-    <style jsx global>{`
-      body {
-        margin: 0;
-      }
-    `}</style>
+      <style jsx global>{`
+        body {
+          margin: 0;
+        }
+      `}</style>
     </div>
   )
 }

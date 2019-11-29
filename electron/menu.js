@@ -31,9 +31,9 @@ const macOSTemplate = [
     label: 'Experimental',
     submenu: [
       {
-        label: 'Leaflet',
+        label: 'L7',
         click: async () => {
-          onLoadPage('index')
+          onLoadPage('antv/l7')
         }
       },
     ]

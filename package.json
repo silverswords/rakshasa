@@ -11,6 +11,8 @@
     "start:main": "cross-env NODE_ENV=development electron ."
   },
   "dependencies": {
+    "@antv/l7": "^2.0.0-beta.15",
+    "@antv/l7-maps": "^2.0.0-beta.15",
     "@zeit/next-less": "^1.0.1",
     "babel-plugin-import": "^1.12.2",
     "isomorphic-unfetch": "^3.0.0",
