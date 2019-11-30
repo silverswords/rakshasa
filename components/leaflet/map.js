@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import fetch from 'isomorphic-unfetch'
 import L from 'leaflet'
+import { forEach } from 'lodash'
 
 const LeafletMap = () => {
   const fetchIpAddress = async () => {
@@ -207,6 +208,74 @@ const LeafletMap = () => {
     update()
   }
 
+  const geoJsonLeaflet = ({ map }) => {
+    const json = {
+      "type": "FeatureCollection",
+      "features": [{
+          "type": "Feature",
+          "properties": {
+              "shape": "Circle",
+              "radius": 1323.9850473588563,
+              "name": "Unnamed Layer",
+              "category": "default",
+              "id": "6c64dd23-1a6d-4fd9-8daa-472b48c874dd"
+          },
+          "geometry": {
+              "type": "Point",
+              "coordinates": [115.537376, 38.877002]
+          }
+      }, {
+          "type": "Feature",
+          "properties": {
+              "shape": "Circle",
+              "radius": 1132.9914476972826,
+              "name": "Unnamed Layer",
+              "category": "default",
+              "id": "d75fffb5-a390-4db0-86b7-80ec083c084c"
+          },
+          "geometry": {
+              "type": "Point",
+              "coordinates": [115.498753, 38.854414]
+          }
+      }, {
+          "type": "Feature",
+          "properties": {
+              "shape": "Polygon",
+              "name": "Unnamed Layer",
+              "category": "default",
+              "id": "0fdc4b6e-397c-4810-8033-056d2b908732"
+          },
+          "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                  [
+                      [115.528278, 38.85428],
+                      [115.519352, 38.829813],
+                      [115.557804, 38.83008],
+                      [115.589046, 38.857087],
+                      [115.528278, 38.85428]
+                  ]
+              ]
+          }
+      }]
+    }
+
+    forEach(json['features'], (geo, ind) => {
+      L.geoJSON(geo, {
+        pointToLayer: (feature, latlng) => {
+          if (feature.properties.radius) {
+            return new L.Circle(latlng, feature.properties.radius)
+          }
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties.shape !== 'Circle') {
+            layer.addTo(map)
+          }
+        }
+      })
+    })
+  }
+
   useEffect(async () => {
     let { latitude, longitude } = await fetchLocation()
 
@@ -217,12 +286,17 @@ const LeafletMap = () => {
     }).addTo(map)
 
     map.on('click', onMapClick(map))
-
+/*
     L.svg().addTo(map)
     drawD3Circle({ map, latitude, longitude })
     map.on('viewreset', drawD3Circle)
 
-    drawGeoJson({ map })
+    L.circle([38.858959, 115.48708], {
+      radius: 1314.15
+    }).addTo(map)
+
+    drawGeoJson({ map })*/
+    geoJsonLeaflet({ map })
   }, [])
 
   return (
