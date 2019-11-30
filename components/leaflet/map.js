@@ -152,6 +152,44 @@ const LeafletMap = () => {
       })
   }
 
+  const drawCircle = ({ map }, circleJson) => {
+    const mapScaleInMeters = ({ map }) => {
+      const x = map.getSize().x
+      const y = map.getSize().y
+  
+      const maxMeters = map.containerPointToLatLng([0, y]).distanceTo(map.containerPointToLatLng([x,y]))
+      return maxMeters / x
+    }
+
+    const svg = d3.select(map.getPanes().overlayPane).select('svg')
+    const g = svg.select('g')
+
+    circleJson['features'].map((d) => {
+      if (d.properties.shape == 'Circle') {
+        const geo = map.latLngToLayerPoint([
+          d.geometry.coordinates[1],
+          d.geometry.coordinates[0],
+        ])
+        d.coords = {
+          x: geo.y,
+          y: geo.x,
+        }
+        d.radius = d.properties.radius / mapScaleInMeters({ map })
+        return d
+      }
+    })
+
+    g.selectAll('circle')
+      .data(circleJson['features'])
+      .enter()
+      .append('circle')
+      .attr('stroke', 'gray')
+      .attr('fill', 'blue')
+      .attr('cx', d => d.coords.x)
+      .attr('cy', d => d.coords.y)
+      .attr('r', d => d.radius)
+  }
+ 
   const drawGeoJson = ({ map }) => {
     const svg = d3.select(map.getPanes().overlayPane).select('svg')
     const g = svg.select('g')
@@ -287,7 +325,6 @@ const LeafletMap = () => {
 
     map.on('click', onMapClick(map))
 /*
-    L.svg().addTo(map)
     drawD3Circle({ map, latitude, longitude })
     map.on('viewreset', drawD3Circle)
 
@@ -296,6 +333,41 @@ const LeafletMap = () => {
     }).addTo(map)
 
     drawGeoJson({ map })*/
+
+    const json = {
+      "type": "FeatureCollection",
+      "features": [{
+          "type": "Feature",
+          "properties": {
+              "shape": "Circle",
+              "radius": 2013.0230842674937,
+              "name": "Unnamed Layer",
+              "category": "default",
+              "id": "5db977e7-5127-404f-9713-3d1eaf43390c"
+          },
+          "geometry": {
+              "type": "Point",
+              "coordinates": [115.548931, 38.85146]
+          }
+      }, {
+        "type": "Feature",
+        "properties": {
+            "shape": "Circle",
+            "radius": 3057.1522407486777,
+            "name": "Unnamed Layer",
+            "category": "default",
+            "id": "376d788b-8291-484c-8b9f-37b1833cc763"
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [115.465685, 38.899451]
+        }
+      }]
+    }
+
+    L.svg().addTo(map)
+    drawCircle({ map }, json)
+
     geoJsonLeaflet({ map })
   }, [])
 
