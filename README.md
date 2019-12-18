@@ -2,5 +2,3 @@
 
 gis
 ## leaflet 
-
-## mysql geo
