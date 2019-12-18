@@ -323,6 +323,84 @@ const LeafletMap = () => {
       .attr('d', geoPath)
   }
 
+  const geoJSONdraw = ({ map }) => {
+    var geojsonFeature = {
+      "type": "Feature",
+      "properties": {
+          "name": "Coors Field",
+          "amenity": "Baseball Stadium",
+          "popupContent": "This is where the Rockies play!"
+      },
+      "geometry": {
+          "type": "Point",
+          "coordinates": [115.574494, 38.895534]
+      }
+    };
+
+    var myLayer = L.geoJSON().addTo(map);
+    myLayer.addData(geojsonFeature);
+    // L.geoJSON(geojsonFeature).addTo(map);
+
+    var myLines = [{
+      "type": "LineString",
+      "coordinates": [[115.5806, 38.8929], [115.6022, 38.8920], [115.5933,38.9011]]
+    }, {
+      "type": "LineString",
+      "coordinates": [[115.5706, 38.8929], [115.5822, 38.8920], [115.5733,38.9011]]
+    }];
+
+    var myStyle = {
+      "color": "red",
+      "weight": 5,
+      "opacity": 0.65
+    };
+  
+    L.geoJSON(myLines, {
+        style: myStyle
+    }).addTo(map)
+
+    var states = [{
+      "type": "Feature",
+      "properties": {"party": "Republican"},
+      "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [115.5806, 38.9129], 
+            [115.6022, 38.9120], 
+            [115.5933,38.9211],
+            [115.5806, 38.9129]
+          ]]
+      }
+    }, {
+      "type": "Feature",
+      "properties": {"party": "Democrat"},
+      "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [115.5906, 38.8929], 
+            [115.6022, 38.8920], 
+            [115.5933,38.9011]
+          ]]
+      }
+    }]
+  
+    L.geoJSON(states, {
+        style: function(feature) {
+            switch (feature.properties.party) {
+                case 'Republican': return {color: "blue"};
+                case 'Democrat':   return {color: "green"};
+            }
+        }
+    }).addTo(map);
+  }
+
+  const drawPicture = ({ map }) => {
+    var pictureURL = "https://www.diyifanwen.com/images/hebei/087222329168198.jpg"
+    var bounds = L.latLngBounds([[38.9011, 115.5933], [39.0011, 115.6933]])
+    L.rectangle(bounds).addTo(map)
+    L.imageOverlay(pictureURL, bounds).addTo(map)
+  }
+
   useEffect(async () => {
     let { latitude, longitude } = await fetchLocation()
 
@@ -462,6 +540,10 @@ const LeafletMap = () => {
     geoJsonLeaflet({ map })
 
     draw({ map ,geojson })
+
+    geoJSONdraw({ map })
+
+    drawPicture({ map })
   }, [])
 
   return (
